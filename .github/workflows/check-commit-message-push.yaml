@@ -14,6 +14,8 @@ jobs:
       - name: Echo message commits on push
         run: echo '${{ toJSON(github.event.commits) }}' | jq -r ".[].message"
       - name: Check message commits on push
+        env:
+          COMMIT_VAR: ${{ toJSON(github.event.commits), '[commit var]') }}
         run: |
           # shellcheck source=/dev/null
           source ".env.commit_message_regexp"
@@ -21,7 +23,7 @@ jobs:
           set -o nounset   # fail if var undefined
           set -o noclobber # don't overwrite exists files via >
           set -o pipefail  # fails if pipes (|) fails
-          # set -o xtrace  # debug
+          set -o xtrace  # debug
           MESSAGE_COMMITS=`echo '${{ toJSON(github.event.commits) }}' | jq -r ".[].message"`
           if ! $MESSAGE_COMMITS =~ ${COMMIT_MESSAGE_REGEXP} ]]; then
             echo "Invalid message commit:"
