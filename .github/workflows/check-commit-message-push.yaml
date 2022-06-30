@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Echo message commits on push
-        run: echo '${{ toJSON(github.event.commits) }}' | jq "."
+        run: echo '${{ toJSON(github.event.commits) }}' | jq -r ".[].message"
       - name: Check message commits on push
         run: |
           # shellcheck source=/dev/null
