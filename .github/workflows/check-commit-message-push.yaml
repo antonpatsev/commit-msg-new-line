@@ -22,13 +22,9 @@ jobs:
           set -o noclobber # don't overwrite exists files via >
           set -o pipefail  # fails if pipes (|) fails
           # set -o xtrace  # debug
-          readarray -t LIST_MESSAGE_COMMITS < <(echo '${{ toJSON(github.event.commits) }}' | jq -r ".[].message")
-          for MESSAGE_COMMITS in "${LIST_MESSAGE_COMMITS[@]}"
-          do
-            if ! [[ ${MESSAGE_COMMITS} =~ ${COMMIT_MESSAGE_REGEXP} ]]; then
-              echo "Invalid message commit:"
-              echo "${MESSAGE_COMMITS}"
-              exit 1
-            fi
-          done
+          if ! echo '${{ toJSON(github.event.commits) }}' | jq -r ".[].message" =~ ${COMMIT_MESSAGE_REGEXP} ]]; then
+            echo "Invalid message commit:"
+            echo "${MESSAGE_COMMITS}"
+            exit 1
+          fi
         shell: bash {0}
