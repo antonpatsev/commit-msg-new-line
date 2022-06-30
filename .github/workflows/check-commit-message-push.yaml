@@ -24,6 +24,8 @@ jobs:
           set -o noclobber # don't overwrite exists files via >
           set -o pipefail  # fails if pipes (|) fails
           set -o xtrace  # debug
+          echo COMMIT_VAR:
+          echo $COMMIT_VAR
           MESSAGE_COMMITS=`echo '${{ toJSON(github.event.commits) }}' | jq -r ".[].message"`
           if ! $MESSAGE_COMMITS =~ ${COMMIT_MESSAGE_REGEXP} ]]; then
             echo "Invalid message commit:"
