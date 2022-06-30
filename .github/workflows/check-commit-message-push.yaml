@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: Echo message commits on push
+        run: echo '${{ toJSON(github.event.commits) }}' | jq "."
       - name: Check message commits on push
         run: |
           # shellcheck source=/dev/null
@@ -19,14 +21,10 @@ jobs:
           set -o nounset   # fail if var undefined
           set -o noclobber # don't overwrite exists files via >
           set -o pipefail  # fails if pipes (|) fails
-          set -o xtrace  # debug
-          echo github.event.commits:
-          echo '${{ toJSON(github.event.commits) }}'
+          # set -o xtrace  # debug
           readarray -t LIST_MESSAGE_COMMITS < <(echo '${{ toJSON(github.event.commits) }}' | jq -r ".[].message")
           for MESSAGE_COMMITS in "${LIST_MESSAGE_COMMITS[@]}"
           do
-#            echo "echo MESSAGE_COMMITS:"
-#            echo $MESSAGE_COMMITS
             if ! [[ ${MESSAGE_COMMITS} =~ ${COMMIT_MESSAGE_REGEXP} ]]; then
               echo "Invalid message commit:"
               echo "${MESSAGE_COMMITS}"
