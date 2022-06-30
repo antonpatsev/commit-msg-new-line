@@ -11,11 +11,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Echo message commits on push
-        run: echo '${{ toJSON(github.event.commits) }}' | jq -r ".[].message"
       - name: Check message commits on push
-        env:
-          COMMIT_VAR: ${{ contains(github.event.head_commit.message, '[commit var]') }}
         run: |
           # shellcheck source=/dev/null
           source ".env.commit_message_regexp"
@@ -25,11 +21,10 @@ jobs:
           set -o pipefail  # fails if pipes (|) fails
           set -o xtrace  # debug
           echo github.event.head_commit.message:
-          echo ${{ github.event.head_commit.message }}
-#          MESSAGE_COMMITS=`echo '${{ toJSON(github.event.commits) }}' | jq -r ".[].message"`
-          if ! ${{ github.event.head_commit.message }} =~ ${COMMIT_MESSAGE_REGEXP} ]]; then
+          echo "${{ github.event.head_commit.message }}"
+          if ! "${{ github.event.head_commit.message }}" =~ "${COMMIT_MESSAGE_REGEXP}" ]]; then
             echo "Invalid message commit:"
-            echo ${{ github.event.head_commit.message }}
+            echo "${{ github.event.head_commit.message }}"
             exit 1
           fi
         shell: bash {0}
